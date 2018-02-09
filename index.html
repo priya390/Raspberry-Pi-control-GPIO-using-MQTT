@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .btn1 {
+            background-color: green;
+            height: 50px;
+            width: 150px;
+            color: white;
+        }
+
+        .btn2 {
+            background-color: red;
+            height: 50px;
+            width: 150px;
+            color: white;
+        }
+    
+    </style>
+</head>
+<body>
+    <button class="btn1">ON</button>
+    <button class="btn2">OFF</button>
+</body>
+<script src="https://unpkg.com/mqtt@2.15.2/dist/mqtt.min.js"></script>
+<script>
+    "use strict"
+    let client = mqtt.connect("ws://iot.eclipse.org/ws")
+    client.subscribe('My_Home')
+
+    client.on("message", (topic, message) => {
+        let status = message.toString()
+        console.log(status) 
+    })
+
+    let btn1 = document.querySelector(".btn1")
+    btn1.addEventListener('click', () => {
+        client.publish('My_Home', '1')
+    })
+
+    let btn2 = document.querySelector(".btn2")
+    btn2.addEventListener('click', () => {
+        client.publish('My_Home', '0')
+    })
+
+</script>
+</html>
