@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        .btn1 {
-            background-color: green;
+        button {
             height: 50px;
             width: 150px;
+        }
+        .btn1 {
+            background-color: green;
             color: white;
         }
 
         .btn2 {
             background-color: red;
-            height: 50px;
-            width: 150px;
             color: white;
         }
     
@@ -25,16 +25,35 @@
 <body>
     <button class="btn1">ON</button>
     <button class="btn2">OFF</button>
+
+    <hr>
+
+    <div>
+        <button id="temp">Temperature</button>
+        <h2 id="temp_data"></h2>
+    </div>
+
+    <hr>
+
+    <div>
+        <button id="hum">Humidity</button>
+        <h2 id="hum_data"></h2>
+    </div>
 </body>
 <script src="https://unpkg.com/mqtt@2.15.2/dist/mqtt.min.js"></script>
 <script>
     "use strict"
     let client = mqtt.connect("ws://iot.eclipse.org/ws")
-    client.subscribe('My_Home')
+    client.subscribe('My_Home_Temp')
+    client.subscribe('My_Home_Hum')
 
     client.on("message", (topic, message) => {
         let status = message.toString()
-        console.log(status) 
+        if(topic == 'My_Home_Temp') {
+            document.querySelector('#temp_data').innerHTML = status + " &deg;C @ " + new Date().toLocaleTimeString()
+        } else if (topic == 'My_Home_Hum') {
+            document.querySelector('#hum_data').innerHTML = status + "% @ " + new Date().toLocaleTimeString()
+        }
     })
 
     let btn1 = document.querySelector(".btn1")
@@ -45,6 +64,16 @@
     let btn2 = document.querySelector(".btn2")
     btn2.addEventListener('click', () => {
         client.publish('My_Home', '0')
+    })
+
+    let temp = document.querySelector("#temp")
+    temp.addEventListener('click', () => {
+        client.publish('My_Home', 'temp')
+    })
+
+    let hum = document.querySelector("#hum")
+    hum.addEventListener('click', () => {
+        client.publish('My_Home', 'hum')
     })
 
 </script>

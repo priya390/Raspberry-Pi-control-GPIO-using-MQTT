@@ -12,6 +12,12 @@ def on_message(client, user_data, msg):
         GPIO.on()
     elif status == '0':
         GPIO.off()
+    elif status == 'temp':
+        temperature = GPIO.temp()
+        client.publish('My_Home_Temp', temperature)
+    elif status == 'hum':
+        humidity = GPIO.hum()
+        client.publish('My_Home_Hum', humidity)
 
 client = mqtt.Client()
 
